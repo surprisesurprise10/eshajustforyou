@@ -45,7 +45,8 @@ function guardMedia(){
     if(p){(function chk(u,rest){var t=new Image();t.onload=function(){v.poster=u};t.onerror=function(){if(rest.length)chk(rest.shift(),rest)};t.src=u})(p,altPaths(p,IMG_DIRS))}
     if(src){var alts=altPaths(src.getAttribute('src'),VID_DIRS),failed=false;
       v.setAttribute('preload','metadata');
-      function giveUp(){if(failed)return;failed=true;var c=v.closest('.vcard');c.classList.add('bad');c.querySelector('p').textContent='This video could not be played. Please re-save it as MP4 (H.264 + AAC).'}
+      function giveUp(){if(failed)return;failed=true;var c=v.closest('.vcard'),pp=c.querySelector('p'),name=(src.getAttribute('src')||'').split('/').pop();c.classList.add('bad');pp.textContent='This video could not be played.';
+        if(window.fetch)fetch(name,{method:'HEAD'}).then(function(r){pp.textContent=r.ok?'Found, but cannot be played. Re-save as MP4 (H.264 + AAC).':'File '+name+' is missing. Please upload it next to index.html.'}).catch(function(){})}
       function tryNext(){
         if(alts.length){src.src=alts.shift();v.load()} /* only reloads, never auto-plays */
         else giveUp()}
@@ -66,18 +67,6 @@ function playMusic(){wantMusic=true;
     if(p&&p.catch)p.catch(function(err){
       if(err&&err.name==='NotAllowedError'){armTap();return}
       if(mi<MUSIC.length-1){mi++;go()}else if(window.console)console.warn('Music file not found: upload music.mp3')})})()}
-
-/* ===== COUNTDOWN to her birthday (10 Oct 2026, 12:00 AM, viewer's local time) ===== */
-var BDAY=new Date(2026,9,10,0,0,0).getTime();
-function p2(n){return n<10?'0'+n:''+n}
-function tickCount(){
-  var d=BDAY-Date.now();
-  if(d<=0){$('#cdD').textContent=$('#cdH').textContent=$('#cdM').textContent=$('#cdS').textContent='00';
-    $('#countTitle').textContent='🎉 It is her birthday! 🎉';$('#cdUntil').textContent='Happy Birthday, Esha! Open your surprise 💗';return false}
-  var s=Math.floor(d/1000);
-  $('#cdD').textContent=p2(Math.floor(s/86400));$('#cdH').textContent=p2(Math.floor(s%86400/3600));
-  $('#cdM').textContent=p2(Math.floor(s%3600/60));$('#cdS').textContent=p2(s%60);return true}
-if(tickCount()){var cdTimer=setInterval(function(){if(!tickCount())clearInterval(cdTimer)},1000)}
 
 /* ===== BIRTHDAY WISHES rotating on the password page ===== */
 var WISHES=['May you live a long, happy and healthy life 💗','Wishing you endless smiles and a heart full of peace 🌸','May every dream you carry come true, Esha ✨','May Allah bless you with happiness, success and love always 🤲','Stay as beautiful and kind as you are, today and forever 💖','May your life be filled with laughter, light and beautiful surprises 🎀','Many, many happy returns of the day, my Esha 🎂','May this new year of your life be your best one yet 🌙'],wi=0,wl=$('#wishLine');

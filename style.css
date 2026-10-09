@@ -140,3 +140,12 @@ body{background:linear-gradient(160deg,#ffd0e4,#ff8fbf 45%,#b86bd9);background-a
 .wcard p{margin:.4rem 0 0;font-style:italic;white-space:pre-wrap}
 .wcard.w1{background:linear-gradient(135deg,#fff0f6bb,#ffc2d9bb)}.wcard.w2{background:linear-gradient(135deg,#efe0ffbb,#ffd0e4bb)}.wcard.w3{background:rgba(255,255,255,.7)}
 @media(max-width:560px){.gfoot .btn{width:100%}}
+
+/* ===== v3: countdown + wishes on lock screen ===== */
+.count{text-align:center}
+.count .eyebrow{margin-bottom:.5rem;font-size:.8rem}
+.cells>div{padding:.3rem 0}
+.wishline{font-style:italic;font-size:clamp(1.05rem,3.8vw,1.3rem);min-height:3.2em;margin:.8rem 0;display:flex;align-items:center;justify-content:center;text-shadow:0 2px 12px rgba(120,20,80,.45);transition:opacity .5s,transform .5s}
+.wishline.swap{opacity:0;transform:translateY(8px)}
+@media(max-width:560px){.count{padding:.9rem .6rem}.cells{gap:.3rem}}
+.cells.three{grid-template-columns:repeat(3,1fr)}

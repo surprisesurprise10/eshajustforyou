@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>For Esha 💗</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 <div id="fx" aria-hidden="true"></div>
@@ -18,13 +18,12 @@
   <p class="quote">Every heart, every star and every word inside was made with you in mind. Enter the secret password to open it.</p>
   <div class="glass count" id="countBox" role="timer" aria-live="off">
     <p class="eyebrow" id="countTitle">🎂 Birthday countdown</p>
-    <div class="cells" id="cells">
-      <div><b id="cdD">00</b><span>Days</span></div>
-      <div><b id="cdH">00</b><span>Hours</span></div>
-      <div><b id="cdM">00</b><span>Minutes</span></div>
-      <div><b id="cdS">00</b><span>Seconds</span></div>
+    <div class="cells three" id="cells">
+      <div><b id="cdH">--</b><span>Hours</span></div>
+      <div><b id="cdM">--</b><span>Minutes</span></div>
+      <div><b id="cdS">--</b><span>Seconds</span></div>
     </div>
-    <p class="until" id="cdUntil">until 10 October, your special day 🎉</p>
+    <p class="until" id="cdUntil">left until 12:00 AM tomorrow, 10 October 🎉</p>
   </div>
   <p class="wishline" id="wishLine" aria-live="polite">May you live a long, happy and healthy life 💗</p>
   <form class="glass gate" id="gate" autocomplete="off" novalidate>
@@ -103,8 +102,6 @@
       <div class="vcard"><video controls playsinline preload="none" poster="video-2.jpg" width="360" height="640"><source src="video-2.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 2 ✨</p></div>
       <div class="vcard"><video controls playsinline preload="none" poster="video-3.jpg" width="360" height="640"><source src="video-3.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 3 🌙</p></div>
       <div class="vcard"><video controls playsinline preload="none" poster="video-4.jpg" width="360" height="640"><source src="video-4.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 4 💗</p></div>
-      <div class="vcard"><video controls playsinline preload="none" poster="video-5.jpg" width="360" height="640"><source src="video-5.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 5 ✨</p></div>
-      <div class="vcard"><video controls playsinline preload="none" poster="video-6.jpg" width="360" height="640"><source src="video-6.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 6 🌙</p></div>
     </div>
   </section>
 
@@ -156,6 +153,23 @@
   <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
   <button class="lbn next" id="lbNext" aria-label="Next photo">›</button>
 </div>
-<script src="script.js"></script>
+<script>
+(function(){
+  var T=new Date(2026,9,10,0,0,0).getTime();
+  function p(n){return n<10?'0'+n:''+n}
+  function g(i){return document.getElementById(i)}
+  function tick(){
+    var d=T-Date.now(),h=g('cdH'),m=g('cdM'),s=g('cdS');
+    if(!h)return;
+    if(d<=0){h.textContent=m.textContent=s.textContent='00';
+      g('countTitle').textContent='🎉 It is her birthday! 🎉';g('cdUntil').textContent='Happy Birthday, Esha! 💗';return}
+    var t=Math.floor(d/1000);
+    h.textContent=p(Math.floor(t/3600));m.textContent=p(Math.floor(t%3600/60));s.textContent=p(t%60);
+    setTimeout(tick,1000-(Date.now()%1000));
+  }
+  tick();
+})();
+</script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
