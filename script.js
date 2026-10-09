@@ -51,14 +51,16 @@ function guardMedia(){
   });
 }
 
-/* ===== MUSIC ===== */
-var mb=$('#musicBtn'),au=$('#bgMusic');
-function musicOn(){mb.textContent='Music: On 🎶';mb.setAttribute('aria-pressed','true')}
-function musicOff(){mb.textContent='Music: Off 🎵';mb.setAttribute('aria-pressed','false')}
-function playMusic(){var p=au.play();if(p&&p.then)p.then(musicOn).catch(musicOff)}
-var aAlts=['music.mp3','audio/music.mp3'].filter(function(u){return u!=='audio/music.mp3'});
-au.querySelector('source').addEventListener('error',function(){if(aAlts.length){var s0=au.querySelector('source');s0.src=aAlts.shift();au.load();playMusic();return}musicOff();toast('The music file could not be found. Make sure audio/music.mp3 is uploaded.')});
-mb.onclick=function(){if(!au.paused){au.pause();musicOff();return}playMusic()};
+/* ===== MUSIC: starts by itself right after the correct password (no button) ===== */
+var au=$('#bgMusic'),MUSIC=['audio/music.mp3','music.mp3','images/music.mp3','audio/Music.mp3','Music.mp3'],mi=0,wantMusic=false,armed=false,resume=false;
+au.volume=.7;
+function armTap(){if(armed)return;armed=true;['pointerdown','touchstart','keydown'].forEach(function(ev){document.addEventListener(ev,function f(){document.removeEventListener(ev,f);armed=false;if(wantMusic&&au.paused)playMusic()},{once:true})})}
+function playMusic(){wantMusic=true;
+  (function go(){if(au.getAttribute('src')!==MUSIC[mi])au.src=MUSIC[mi];
+    var p=au.play();
+    if(p&&p.catch)p.catch(function(err){
+      if(err&&err.name==='NotAllowedError'){armTap();return}
+      if(mi<MUSIC.length-1){mi++;go()}else if(window.console)console.warn('Music file not found: upload music.mp3')})})()}
 
 /* ===== PASSWORD GATE ===== */
 var unlocked=false,lock=$('#lock'),uni=$('#universe'),gate=$('#gate'),pw=$('#pw'),msg=$('#pwMsg'),tries=0;
@@ -86,7 +88,7 @@ function unlock(){
   if(!reduce){for(var i=0;i<6;i++)setTimeout(function(){burst(r(60,innerWidth-60),innerHeight*.7,14)},i*300);}
   lock.classList.add('out');
   setTimeout(function(){lock.hidden=true;lock.style.display='none';document.body.style.overflow='';pw.value='';},reduce?50:1500);
-  initGallery();watchFades();
+  initGallery();watchFades();loadWishes();
 }
 
 /* ===== MEDIA: fallbacks, lightbox, videos ===== */
@@ -100,7 +102,9 @@ function initGallery(){
   });
   photos=$$('img.zoom');
   $$('video').forEach(function(v){
-    v.addEventListener('play',function(){$$('video').forEach(function(o){if(o!==v)o.pause()});if(!au.paused){au.pause();musicOff()}});
+    v.addEventListener('play',function(){$$('video').forEach(function(o){if(o!==v)o.pause()});if(!au.paused){au.pause();resume=true}});
+    function back(){if(resume&&!$$('video').some(function(x){return !x.paused&&!x.ended})){resume=false;au.play().catch(function(){})}}
+    v.addEventListener('pause',back);v.addEventListener('ended',back);
   });
 }
 var lb=$('#lightbox'),lbi=$('#lbImg'),lbc=$('#lbCap'),lastFocus;
@@ -110,6 +114,49 @@ function close(){lb.hidden=true;if(lastFocus)lastFocus.focus()}
 $('#lbClose').onclick=close;$('#lbPrev').onclick=function(){show(cur-1)};$('#lbNext').onclick=function(){show(cur+1)};
 lb.addEventListener('click',function(e){if(e.target===lb)close()});
 document.addEventListener('keydown',function(e){if(lb.hidden)return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')show(cur-1);if(e.key==='ArrowRight')show(cur+1)});
+
+/* ===== GUESTBOOK: wishes for Esha ===== */
+var FB={project:'',key:''}; /* paste your Firebase projectId and apiKey here (see setup steps) */
+var online=!!(FB.project&&FB.key),LS='esha-wishes',lastPost=0;
+var fbBase='https://firestore.googleapis.com/v1/projects/'+FB.project+'/databases/(default)/documents';
+var wForm=$('#wishForm'),wName=$('#wName'),wMsg=$('#wMsg'),wStat=$('#wStatus'),wList=$('#wishList'),wSend=$('#wSend');
+function lsGet(){try{return JSON.parse(localStorage.getItem(LS)||'[]')}catch(e){return[]}}
+function renderWishes(list){
+  wList.textContent='';
+  if(!list.length){var p=document.createElement('p');p.className='center tiny';p.textContent='No wishes yet. Be the first to write one for Esha 💗';wList.appendChild(p);return}
+  list.forEach(function(w,i){
+    var c=document.createElement('article');c.className='wcard w'+(i%4);
+    var h=document.createElement('header'),n=document.createElement('b'),d=document.createElement('time'),m=document.createElement('p');
+    n.textContent='💗 '+w.name;d.textContent=new Date(w.ts).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});m.textContent=w.message;
+    h.appendChild(n);h.appendChild(d);c.appendChild(h);c.appendChild(m);wList.appendChild(c)});
+}
+function loadWishes(){
+  if(!online){renderWishes(lsGet());return}
+  fetch(fbBase+':runQuery?key='+encodeURIComponent(FB.key),{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({structuredQuery:{from:[{collectionId:'wishes'}],orderBy:[{field:{fieldPath:'ts'},direction:'DESCENDING'}],limit:100}})})
+  .then(function(r){if(!r.ok)throw 0;return r.json()})
+  .then(function(a){renderWishes(a.filter(function(x){return x.document}).map(function(x){var f=x.document.fields;
+    return{name:f.name.stringValue,message:f.message.stringValue,ts:Number(f.ts.integerValue)}}))})
+  .catch(function(){wList.textContent='';var p=document.createElement('p');p.className='center tiny';p.textContent='Could not load the wishes right now. Please try again later.';wList.appendChild(p)});
+}
+function saveWish(w){
+  if(!online){var l=lsGet();l.unshift(w);try{localStorage.setItem(LS,JSON.stringify(l.slice(0,100)))}catch(e){}return Promise.resolve()}
+  return fetch(fbBase+'/wishes?key='+encodeURIComponent(FB.key),{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({fields:{name:{stringValue:w.name},message:{stringValue:w.message},ts:{integerValue:String(w.ts)}}})})
+  .then(function(r){if(!r.ok)throw 0});
+}
+wMsg.addEventListener('input',function(){$('#wCount').textContent=wMsg.value.length+' / 500'});
+wForm.addEventListener('submit',function(e){
+  e.preventDefault();
+  var msg=wMsg.value.trim(),name=wName.value.trim()||'A friend';
+  if(!msg){wStat.textContent='Please write a little wish first 💗';return}
+  if(Date.now()-lastPost<15000){wStat.textContent='Please wait a few seconds before sending another wish.';return}
+  wSend.disabled=true;wStat.textContent='Sending your wish...';
+  saveWish({name:name.slice(0,40),message:msg.slice(0,500),ts:Date.now()}).then(function(){
+    lastPost=Date.now();wMsg.value='';$('#wCount').textContent='0 / 500';wStat.textContent='Thank you! Your wish for Esha has been added 💗';
+    var rc=wSend.getBoundingClientRect();burst(rc.left+rc.width/2,rc.top,18);loadWishes();
+  }).catch(function(){wStat.textContent='Sorry, your wish could not be sent. Please try again.'}).then(function(){wSend.disabled=false});
+});
 
 /* ===== INTERACTIONS ===== */
 function watchFades(){var els=$$('.fade');if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('in')});return}

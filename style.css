@@ -124,3 +124,19 @@ body{background:linear-gradient(160deg,#ffd0e4,#ff8fbf 45%,#b86bd9);background-a
   #lightbox figure{max-width:92vw}
   .lbn{position:absolute;bottom:1rem}.lbn.prev{left:1rem}.lbn.next{right:1rem}
 }
+
+/* ===== guestbook ===== */
+.gform{max-width:560px;margin:1.2rem auto 2rem;padding:1.2rem;display:flex;flex-direction:column;gap:.5rem;text-align:left}
+.gform label{font-style:italic;font-weight:700;color:var(--deep)}
+.gform input,.gform textarea{width:100%;font:inherit;font-size:16px;padding:.7rem .9rem;border-radius:16px;border:2px solid rgba(255,255,255,.85);background:rgba(255,255,255,.9);color:var(--ink);outline:none;resize:vertical}
+.gform input:focus,.gform textarea:focus{border-color:var(--hot);box-shadow:0 0 0 3px rgba(255,255,255,.6),var(--glow)}
+.gfoot{display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;margin-top:.3rem}
+.gstatus{min-height:1.4em;margin:0;color:var(--deep);font-style:italic}
+.btn:disabled{opacity:.6;cursor:wait}
+.wlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1.1rem;max-width:900px;margin:0 auto}
+.wcard{padding:1rem 1.1rem;border-radius:20px;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.85);box-shadow:var(--shadow);overflow-wrap:anywhere}
+.wcard header{display:flex;justify-content:space-between;gap:.6rem;align-items:baseline;flex-wrap:wrap}
+.wcard time{font-size:.8rem;opacity:.7}
+.wcard p{margin:.4rem 0 0;font-style:italic;white-space:pre-wrap}
+.wcard.w1{background:linear-gradient(135deg,#fff0f6bb,#ffc2d9bb)}.wcard.w2{background:linear-gradient(135deg,#efe0ffbb,#ffd0e4bb)}.wcard.w3{background:rgba(255,255,255,.7)}
+@media(max-width:560px){.gfoot .btn{width:100%}}

@@ -92,8 +92,6 @@
       <div class="vcard"><video controls playsinline preload="none" poster="images/video-2.jpg" width="360" height="640"><source src="videos/WhatsApp%20Video%202026-10-09%20at%207.55.12%20AM.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 2 ✨</p></div>
       <div class="vcard"><video controls playsinline preload="none" poster="images/video-3.jpg" width="360" height="640"><source src="videos/WhatsApp%20Video%202026-10-09%20at%207.55.13%20AM.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 3 🌙</p></div>
       <div class="vcard"><video controls playsinline preload="none" poster="images/video-4.jpg" width="360" height="640"><source src="videos/WhatsApp%20Video%202026-10-09%20at%207.55.14%20AM.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 4 💗</p></div>
-      <div class="vcard"><video controls playsinline preload="none" poster="images/video-5.jpg" width="360" height="640"><source src="videos/WhatsApp%20Video%202026-10-09%20at%207.55.14%20AM%20%281%29.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 5 ✨</p></div>
-      <div class="vcard"><video controls playsinline preload="none" poster="images/video-6.jpg" width="360" height="640"><source src="videos/WhatsApp%20Video%202026-10-09%20at%207.55.15%20AM.mp4" type="video/mp4">Your browser can't play this video.</video><p>Little moment 6 🌙</p></div>
     </div>
   </section>
 
@@ -109,12 +107,25 @@
     <div class="btnrow">
       <button class="btn" id="loveBtn">Send Esha Some Love 💗</button>
       <button class="btn alt" id="surpriseBtn" aria-expanded="false" aria-controls="secret">One More Little Surprise 🎁</button>
-      <button class="btn alt" id="musicBtn" aria-pressed="false">Music: Off 🎵</button>
     </div>
     <p id="secret" class="glass secret" hidden>You are the reason this day feels special to me. Never forget that you are loved, Esha. 💌</p>
     <button class="heartbtn" id="tapHeart" aria-label="Little heart, click me">❤️</button>
     <p class="center tiny" id="tapCount">Tap the little heart 💞</p>
-        <audio id="bgMusic" loop preload="auto"><source src="audio/music.mp3" type="audio/mpeg"></audio>
+        <audio id="bgMusic" loop preload="auto"></audio>
+  </section>
+
+  <section class="sec guest" id="guestbook">
+    <h2 class="script">Birthday Wishes for Esha 💌</h2>
+    <p class="center">Leave a sweet message or birthday wish for Esha. Every wish will stay here for her to read. 💗</p>
+    <form class="glass gform" id="wishForm" autocomplete="off">
+      <label for="wName">Your name</label>
+      <input id="wName" type="text" maxlength="40" placeholder="Your name" autocomplete="name">
+      <label for="wMsg">Your wish</label>
+      <textarea id="wMsg" maxlength="500" rows="4" placeholder="Write a birthday wish for Esha..." required></textarea>
+      <div class="gfoot"><span id="wCount" class="tiny">0 / 500</span><button class="btn" id="wSend" type="submit">Send My Wish 💗</button></div>
+      <p class="tiny gstatus" id="wStatus" role="status" aria-live="polite"></p>
+    </form>
+    <div class="wlist" id="wishList" aria-live="polite"></div>
   </section>
 
   <section class="sec final" id="final">
