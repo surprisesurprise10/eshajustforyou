@@ -155,7 +155,7 @@
 </div>
 <script>
 (function(){
-  var T=new Date(2026,9,10,0,0,0).getTime();
+  var T=Date.UTC(2026,9,9,19,0,0); /* 12:00 AM on 10 Oct 2026 in Pakistan time (UTC+5), same for every device */
   function p(n){return n<10?'0'+n:''+n}
   function g(i){return document.getElementById(i)}
   function tick(){
