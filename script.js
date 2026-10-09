@@ -31,7 +31,7 @@ function burst(x,y,n){
 function toast(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;t.setAttribute('role','status');document.body.appendChild(t);setTimeout(function(){t.remove()},4500)}
 
 /* ===== MEDIA PATHS: try the usual folders so files load wherever they were uploaded ===== */
-var IMG_DIRS=['images/','','img/','photos/'],VID_DIRS=['videos/','','images/','video/'];
+var IMG_DIRS=['','images/','img/','photos/'],VID_DIRS=['','videos/','images/','video/'];
 function altPaths(url,dirs){var name=url.split('/').pop(),out=[];dirs.forEach(function(d){var u=d+name;if(u!==url&&out.indexOf(u)<0)out.push(u)});return out}
 function guardMedia(){
   $$('img').forEach(function(img){
@@ -43,16 +43,21 @@ function guardMedia(){
   $$('video').forEach(function(v){
     var src=v.querySelector('source'),p=v.getAttribute('poster');
     if(p){(function chk(u,rest){var t=new Image();t.onload=function(){v.poster=u};t.onerror=function(){if(rest.length)chk(rest.shift(),rest)};t.src=u})(p,altPaths(p,IMG_DIRS))}
-    if(src){var alts=altPaths(src.getAttribute('src'),VID_DIRS);
-      src.addEventListener('error',function(){
-        if(alts.length){src.src=alts.shift();v.load();var pr=v.play();if(pr&&pr.catch)pr.catch(function(){})}
-        else{var c=v.closest('.vcard');c.classList.add('bad');c.querySelector('p').textContent='This video could not be played. Please re-save it as MP4 (H.264 + AAC).'}
-      })}
+    if(src){var alts=altPaths(src.getAttribute('src'),VID_DIRS),failed=false;
+      v.setAttribute('preload','metadata');
+      function giveUp(){if(failed)return;failed=true;var c=v.closest('.vcard');c.classList.add('bad');c.querySelector('p').textContent='This video could not be played. Please re-save it as MP4 (H.264 + AAC).'}
+      function tryNext(){
+        if(alts.length){src.src=alts.shift();v.load()} /* only reloads, never auto-plays */
+        else giveUp()}
+      src.addEventListener('error',tryNext);
+      v.addEventListener('error',function(){if(v.error&&v.error.code===3)giveUp();else tryNext()}); /* code 3 = file found but cannot be decoded */
+      v.addEventListener('loadedmetadata',function(){failed=false;var c=v.closest('.vcard');c.classList.remove('bad')});
+    }
   });
 }
 
 /* ===== MUSIC: starts by itself right after the correct password (no button) ===== */
-var au=$('#bgMusic'),MUSIC=['audio/music.mp3','music.mp3','images/music.mp3','audio/Music.mp3','Music.mp3'],mi=0,wantMusic=false,armed=false,resume=false;
+var au=$('#bgMusic'),MUSIC=['music.mp3','audio/music.mp3','images/music.mp3','audio/Music.mp3','Music.mp3'],mi=0,wantMusic=false,armed=false,resume=false;
 au.volume=.7;
 function armTap(){if(armed)return;armed=true;['pointerdown','touchstart','keydown'].forEach(function(ev){document.addEventListener(ev,function f(){document.removeEventListener(ev,f);armed=false;if(wantMusic&&au.paused)playMusic()},{once:true})})}
 function playMusic(){wantMusic=true;
@@ -61,6 +66,22 @@ function playMusic(){wantMusic=true;
     if(p&&p.catch)p.catch(function(err){
       if(err&&err.name==='NotAllowedError'){armTap();return}
       if(mi<MUSIC.length-1){mi++;go()}else if(window.console)console.warn('Music file not found: upload music.mp3')})})()}
+
+/* ===== COUNTDOWN to her birthday (10 Oct 2026, 12:00 AM, viewer's local time) ===== */
+var BDAY=new Date(2026,9,10,0,0,0).getTime();
+function p2(n){return n<10?'0'+n:''+n}
+function tickCount(){
+  var d=BDAY-Date.now();
+  if(d<=0){$('#cdD').textContent=$('#cdH').textContent=$('#cdM').textContent=$('#cdS').textContent='00';
+    $('#countTitle').textContent='🎉 It is her birthday! 🎉';$('#cdUntil').textContent='Happy Birthday, Esha! Open your surprise 💗';return false}
+  var s=Math.floor(d/1000);
+  $('#cdD').textContent=p2(Math.floor(s/86400));$('#cdH').textContent=p2(Math.floor(s%86400/3600));
+  $('#cdM').textContent=p2(Math.floor(s%3600/60));$('#cdS').textContent=p2(s%60);return true}
+if(tickCount()){var cdTimer=setInterval(function(){if(!tickCount())clearInterval(cdTimer)},1000)}
+
+/* ===== BIRTHDAY WISHES rotating on the password page ===== */
+var WISHES=['May you live a long, happy and healthy life 💗','Wishing you endless smiles and a heart full of peace 🌸','May every dream you carry come true, Esha ✨','May Allah bless you with happiness, success and love always 🤲','Stay as beautiful and kind as you are, today and forever 💖','May your life be filled with laughter, light and beautiful surprises 🎀','Many, many happy returns of the day, my Esha 🎂','May this new year of your life be your best one yet 🌙'],wi=0,wl=$('#wishLine');
+setInterval(function(){wi=(wi+1)%WISHES.length;wl.classList.add('swap');setTimeout(function(){wl.textContent=WISHES[wi];wl.classList.remove('swap')},500)},4500);
 
 /* ===== PASSWORD GATE ===== */
 var unlocked=false,lock=$('#lock'),uni=$('#universe'),gate=$('#gate'),pw=$('#pw'),msg=$('#pwMsg'),tries=0;
