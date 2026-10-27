@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Piece of the Moon 🌙</title>
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="nebula" aria-hidden="true"></div>
+
+<header class="nav">
+  <a href="#top">Home</a>
+  <a href="#match">Love matcher</a>
+  <a href="#birth">Birth sky</a>
+  <a href="#games">Love games</a>
+</header>
+
+<main id="top">
+
+  <!-- ===================== HERO ===================== -->
+  <div class="hero">
+    <div>
+      <div class="moon-wrap"><div class="moon" aria-hidden="true"></div><img class="moon-img" id="moonImg" src="images/moon.jpg" alt="The crescent moon"><span class="moon-heart" aria-hidden="true">❤</span></div>
+      <h1 class="names" id="heroTitle">A Piece of the Moon, More Beautiful Than the Moon Itself — Landed on 10/10/2008. 🌙❤️</h1>
+      <p class="tagline" id="tagline">Under every moon and a million stars, my heart still finds its way to you.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#match">Check our love</a>
+        <a class="btn ghost" href="#birth">Find your birth sky</a>
+      </div>
+      <p class="together" id="together" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <!-- ===================== LOVE MATCHER ===================== -->
+  <section id="match">
+    <h2>Love matcher</h2>
+    <p class="lede">Type two names and see what the stars say. Add birth dates if you want a sharper reading.</p>
+
+    <div class="panel">
+      <div class="grid2">
+        <div class="person">
+          <h3>You</h3>
+          <div class="f"><label for="m_name1">Your name</label><input id="m_name1" type="text" placeholder="Your name" value="" autocomplete="off"></div>
+          <div class="f"><label for="m_dob1">Your birth date <span class="opt">(optional)</span></label><input id="m_dob1" type="date" min="1900-01-01"></div>
+        </div>
+        <div class="person">
+          <h3>Your partner</h3>
+          <div class="f"><label for="m_name2">Partner’s name</label><input id="m_name2" type="text" placeholder="Partner’s name" value="Esha" autocomplete="off"></div>
+          <div class="f"><label for="m_dob2">Partner’s birth date <span class="opt">(optional)</span></label><input id="m_dob2" type="date" min="1900-01-01"></div>
+        </div>
+      </div>
+      <div class="center"><button class="btn" id="matchBtn" type="button">Calculate our love</button></div>
+
+      <div class="result" id="result" aria-live="polite">
+        <div class="ring">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ff5f9e"/></linearGradient></defs>
+            <circle class="track" cx="60" cy="60" r="52" fill="none" stroke-width="9"/>
+            <circle class="bar" id="ringBar" cx="60" cy="60" r="52" fill="none" stroke-width="9" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+          </svg>
+          <div class="pct" id="pct">0%</div>
+        </div>
+        <div class="verdict" id="verdict"></div>
+        <p class="reading" id="reading"></p>
+        <div class="meters" id="meters"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BIRTH SKY ===================== -->
+  <section id="birth">
+    <h2>Your birth sky</h2>
+    <p class="lede">Add a birth date to see how long you have been shining, the moon the night you arrived, your horoscope, and what happened in the world that day.</p>
+
+    <div class="panel">
+      <div class="dob-form">
+        <div><label for="b_name">Name</label><input id="b_name" type="text" placeholder="Esha" autocomplete="off"></div>
+        <div><label for="b_date">Birth date</label><input id="b_date" type="date" min="1900-01-01"></div>
+        <div><label for="b_time">Birth time <span class="opt">(optional)</span></label><input id="b_time" type="time"></div>
+        <button class="btn" id="birthBtn" type="button">Show my sky</button>
+      </div>
+
+      <div class="sky" id="sky">
+
+        <div>
+          <div class="clock" id="clock" aria-live="off">
+            <div class="big"><b id="c_years">0</b><span>years</span></div>
+            <div><b id="c_days">0</b><span>days</span></div>
+            <div><b id="c_hours">0</b><span>hours</span></div>
+            <div><b id="c_mins">0</b><span>minutes</span></div>
+            <div><b id="c_secs">0</b><span>seconds</span></div>
+          </div>
+          <p class="next-bday" id="nextBday"></p>
+        </div>
+
+        <div class="birth-cols">
+          <div class="panel moon-box">
+            <svg id="phaseMoon" viewBox="0 0 200 200" role="img" aria-label="Moon phase on the birth date"></svg>
+            <div class="phase-name" id="phaseName"></div>
+            <p class="small" id="phaseInfo"></p>
+            <figure class="sky-photo" id="skyPhoto" hidden>
+              <img id="skyImg" alt="">
+              <figcaption id="skyCap"></figcaption>
+            </figure>
+          </div>
+
+          <div class="panel zodiac">
+            <h4>Horoscope</h4>
+            <h3 id="zName"></h3>
+            <p id="zText"></p>
+            <ul class="facts" id="facts"></ul>
+          </div>
+        </div>
+
+        <div class="panel events">
+          <h3 id="evTitle">The world that day</h3>
+          <ul id="evList"><li>Looking through the stars…</li></ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GAMES ===================== -->
+  <section id="games">
+    <h2>Love games</h2>
+    <p class="lede">Little games for two hearts and a night sky.</p>
+    <div class="games">
+
+      <div class="panel game" id="g1">
+        <h3>Catch the hearts</h3>
+        <div class="meta"><span>Score: <b id="hScore">0</b></span><span>Time: <b id="hTime">30</b>s</span><span>Best: <b id="hBest">0</b></span></div>
+        <div class="arena" id="arena">
+          <div class="overlay" id="hOverlay"><div><p>Tap hearts to catch them. Gold stars are worth 5. Broken hearts take 3 away.</p><br><button class="btn" id="hStart" type="button">Start</button></div></div>
+        </div>
+      </div>
+
+      <div class="panel game" id="g2">
+        <h3>Memory of hearts</h3>
+        <div class="meta"><span>Moves: <b id="mMoves">0</b></span><span>Pairs: <b id="mPairs">0</b>/8</span><button class="btn ghost" id="mReset" type="button" style="padding:.4rem 1rem">New game</button></div>
+        <div class="memory" id="memory"></div>
+      </div>
+
+      <div class="panel game" id="g3">
+        <h3>Wish on a star</h3>
+        <p class="small">Pick a star. Each one holds a message just for you.</p>
+        <div class="fortune-stars" id="fstars"></div>
+        <div class="fortune-text" id="fortune" aria-live="polite"></div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="script" id="footName">Esha ♥</span>
+  Made with love, under the same moon.
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
